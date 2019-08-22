@@ -1,24 +1,12 @@
-# See https://github.com/nodejs/docker-node#how-to-use-this-image
 version: '3'
-
-# networks:
-#     app_bridge:
-#         external: true
 
 services:
     app:
         container_name: reactapp
         image: reactapp:latest
-        build:
-            context: .
-            args:
-              - NODE_TAG=12
-              # - NGINX_TAG=alpine
+        build: .
         environment:
             - NODE_ENV=production
-        # networks:
-        #     - app_bridge
         ports:
             - 8080:3000
-            # - 8080:80
         restart: always
