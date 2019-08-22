@@ -4,7 +4,8 @@ ARG NODE_TAG
 ARG APP_HOME=/home/node/app
 
 RUN echo "node:${NODE_TAG}" > /docker-image-tag && cat /docker-image-tag && \
-    mkdir $APP_HOME && chown node:node $APP_HOME
+    mkdir $APP_HOME && chown node:node $APP_HOME && \
+    npm install -g serve
 
 USER node
 WORKDIR $APP_HOME
@@ -13,5 +14,6 @@ RUN npm install --production && npm cache clean --force
 
 COPY --chown=node:node src $APP_HOME/src/
 COPY --chown=node:node public $APP_HOME/public/
+RUN npm run build
 
-CMD ["/bin/bash","-c","npm start"]
+CMD ["/bin/bash","-c","serve -s build"]
