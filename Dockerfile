@@ -1,19 +1,26 @@
 ARG NODE_TAG=12
-FROM node:${NODE_TAG}
+ARG NGINX_TAG=alpine
+ARG APP_HOME=/home/node
+
+# build stage
+FROM node:${NODE_TAG} as build
 ARG NODE_TAG
-ARG APP_HOME=/home/node/app
+ARG APP_HOME
 
-RUN echo "node:${NODE_TAG}" > /docker-image-tag && cat /docker-image-tag && \
-    mkdir $APP_HOME && chown node:node $APP_HOME && \
-    npm install -g serve
+WORKDIR ${APP_HOME}
+COPY --chown=node:node package*.json ${APP_HOME}/
+RUN npm install --production 
 
-USER node
-WORKDIR $APP_HOME
-COPY --chown=node:node package*.json $APP_HOME/
-RUN npm install --production && npm cache clean --force
-
-COPY --chown=node:node src $APP_HOME/src/
-COPY --chown=node:node public $APP_HOME/public/
+COPY --chown=node:node src ${APP_HOME}/src/
+COPY --chown=node:node public ${APP_HOME}/public/
 RUN npm run build
 
-CMD ["/bin/bash","-c","serve -s build"]
+# deploy stage
+FROM nginx:${NGINX_TAG}
+ARG NGINX_TAG
+ARG APP_HOME
+RUN echo "nginx:${NGINX_TAG}" > /docker-image-tag && cat /docker-image-tag
+COPY --from=build ${APP_HOME}/build /usr/share/nginx/html
+
+WORKDIR /usr/share/nginx/html
+CMD ["nginx", "-g", "daemon off;"]
