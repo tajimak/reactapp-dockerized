@@ -4,7 +4,11 @@ services:
     app:
         container_name: reactapp
         image: reactapp:latest
-        build: .
+        build:
+            context: .
+            args:
+              - NODE_TAG=12.8
+              - NGINX_TAG=alpine
         environment:
             - NODE_ENV=production
         ports:
