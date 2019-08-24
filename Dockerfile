@@ -1,6 +1,6 @@
 ARG NODE_TAG=12
 ARG NGINX_TAG=alpine
-ARG APP_HOME=/home/node
+ARG APP_HOME=/home/node/app
 
 # build stage
 FROM node:${NODE_TAG} as build
@@ -8,11 +8,13 @@ ARG NODE_TAG
 ARG APP_HOME
 
 WORKDIR ${APP_HOME}
-COPY --chown=node:node package*.json ${APP_HOME}/
-RUN npm install --production 
+COPY package*.json ${APP_HOME}/
+RUN echo -n 'node '; node -v; \
+    echo -n 'npm '; npm -v ; \
+    npm install --production
 
-COPY --chown=node:node src ${APP_HOME}/src/
-COPY --chown=node:node public ${APP_HOME}/public/
+COPY src ${APP_HOME}/src/
+COPY public ${APP_HOME}/public/
 RUN npm run build
 
 # deploy stage
