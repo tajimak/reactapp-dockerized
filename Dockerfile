@@ -1,4 +1,4 @@
-ARG NODE_TAG=12
+ARG NODE_TAG=lts
 ARG NGINX_TAG=alpine
 ARG APP_HOME=/home/node/app
 

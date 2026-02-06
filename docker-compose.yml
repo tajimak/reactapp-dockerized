@@ -7,7 +7,7 @@ services:
         build:
             context: .
             args:
-              - NODE_TAG=12.8
+              - NODE_TAG=lts
               - NGINX_TAG=alpine
         environment:
             - NODE_ENV=production
